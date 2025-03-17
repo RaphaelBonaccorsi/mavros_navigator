@@ -1,0 +1,10 @@
+# Goal
+geometry_msgs/PoseStamped destination
+
+---
+# Result
+bool success
+
+---
+# Feedback
+float32 distance
