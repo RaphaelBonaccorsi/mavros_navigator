@@ -1,6 +1,5 @@
 # Mavros Navigator
-ROS 2 package for navigating using MavROS, it has a action server that receives PoseStamped waypoints and go to them.
-
+This repository is a Python-based ROS 2 Humble package that uses MAVROS for drone navigation. It includes an action server that accepts PoseStamped waypoints to guide the drone along a defined route. The package relies on ROS 2 communication and MAVROS integration with MAVLink-compatible flight controllers, and it is designed to be easy to deploy and customize.
 ## Architecture
 
 ![mavros_navigator_architecture](https://github.com/user-attachments/assets/213e5f83-22da-4fbd-9d50-acf7ad9ef12e)
