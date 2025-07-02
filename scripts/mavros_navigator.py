@@ -23,7 +23,6 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDur
 from mavros_navigator_interfaces.action import MoveTo
 import time
 
-
 class MavrosNavigator(Node):
     """
     A node that manages drone waypoint navigation using MAVROS and ROS 2 actions.
@@ -125,6 +124,7 @@ class MavrosNavigator(Node):
         """
         self.get_logger().info(f'Receiving move request to: {goal_request.destination.pose}')
         self.waypoint = goal_request.destination
+        self.get_logger().info('Goal accepted.')
         return GoalResponse.ACCEPT
 
     def cancel_callback(self, goal_handle):
@@ -175,6 +175,7 @@ class MavrosNavigator(Node):
             # Update feedback with the current distance to the waypoint
             feedback_msg.distance = float(self.get_distance(self.waypoint))
             goal_handle.publish_feedback(feedback_msg)
+            self.get_logger().info(f"Current distance to waypoint: {feedback_msg.distance:.2f}")
 
             # Check if the target waypoint is reached
             if self.has_reached_waypoint(self.waypoint):
@@ -192,6 +193,7 @@ class MavrosNavigator(Node):
                 goal_future.set_result(result)
             # Otherwise, publish the current setpoint again
             else:
+                self.get_logger().debug('Publishing current setpoint again...')
                 self.publish_current_setpoint()
 
         # Configure the timer to execute the callback periodically at 20Hz
@@ -212,6 +214,8 @@ class MavrosNavigator(Node):
             The message containing the drone's current position.
         """
         self.current_position = msg
+        pos = msg.pose.position
+        self.get_logger().debug(f"Position update: x={pos.x:.2f}, y={pos.y:.2f}, z={pos.z:.2f}")
 
     def get_current_position(self):
         """
@@ -239,6 +243,7 @@ class MavrosNavigator(Node):
         msg.pose.orientation.w = 1.0
 
         self.publisher_.publish(msg)
+        self.get_logger().debug(f"Published setpoint: x={msg.pose.position.x:.2f}, y={msg.pose.position.y:.2f}, z={msg.pose.position.z:.2f}")
 
     def set_offboard_mode(self):
         """
@@ -274,7 +279,7 @@ class MavrosNavigator(Node):
         else:
             self.get_logger().error('Failed to arm the drone')
 
-    def has_reached_waypoint(self, waypoint, threshold=1.0):
+    def has_reached_waypoint(self, waypoint, threshold=2.5):
         """
         Checks if the drone has reached the specified waypoint.
 
@@ -295,7 +300,7 @@ class MavrosNavigator(Node):
 
     def get_distance(self, waypoint):
         """
-        Calculates the Euclidean distance between the drone's current position and a target waypoint.
+        Calculates the Euclidean distance between the drone's current position and a target waypoint, ignoring altitude.
 
         Parameters
         ----------
@@ -305,13 +310,12 @@ class MavrosNavigator(Node):
         Returns
         -------
         float
-            The calculated distance to the waypoint.
+            The calculated 2D distance to the waypoint (x, y only).
         """
         current_position = self.get_current_position()
         distance = sqrt(
             (waypoint.pose.position.x - current_position.x) ** 2 +
-            (waypoint.pose.position.y - current_position.y) ** 2 +
-            (waypoint.pose.position.z - current_position.z) ** 2
+            (waypoint.pose.position.y - current_position.y) ** 2
         )
         return distance
 

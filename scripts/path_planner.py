@@ -29,12 +29,12 @@ class Map:
 
     def read_coordinates(self, file_path):
         """
-        Reads a file with comma-separated values and returns a list of floats.
+        Reads a file with values and returns a list of floats.
 
         Parameters
         ----------
         file_path : str
-            The path to the file containing comma-separated coordinate values.
+            The path to the file containing coordinate values.
 
         Returns
         -------
