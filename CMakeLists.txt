@@ -27,6 +27,7 @@ install(DIRECTORY data DESTINATION share/${PROJECT_NAME})
 install(PROGRAMS
   scripts/mavros_navigator.py
   scripts/path_planner.py
+  scripts/data_logger.py
   DESTINATION lib/${PROJECT_NAME})
 
 

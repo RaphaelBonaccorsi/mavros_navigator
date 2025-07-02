@@ -26,8 +26,14 @@ def generate_launch_description():
         name='path_planner',
         output='screen',
         parameters=[])
-
     
+    data_logger_cmd = Node(
+        package='mavros_navigator',
+        executable='data_logger.py',
+        name='data_logger',
+        output='screen',
+        parameters=[]
+    )    
 
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -36,5 +42,6 @@ def generate_launch_description():
 
     ld.add_action(navigator_cmd)
     ld.add_action(path_planner_cmd)
+    ld.add_action(data_logger_cmd)
 
     return ld
