@@ -42,7 +42,7 @@ class Map:
             A list of coordinate values read from the file.
         """
         with open(file_path, 'r') as file:
-            return [float(coord) for coord in file.read().strip().split(",")]
+            return [float(coord) for coord in file.read().strip().split("\n")]
 
     def load_waypoints_from_files(self):
         """
